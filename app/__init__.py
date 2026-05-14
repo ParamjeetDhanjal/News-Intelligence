@@ -18,10 +18,6 @@ def create_app():
     if not db_url:
         raise RuntimeError("DATABASE_URL not found in .env. Please set it to a PostgreSQL connection string.")
     
-    # Handle Docker-to-host connection on Windows/Mac
-    if "localhost" in db_url and os.path.exists("/.dockerenv"):
-        db_url = db_url.replace("localhost", "host.docker.internal")
-    
     # Handle Postgres URL compatibility (postgres:// vs postgresql://)
     if db_url.startswith("postgres://"):
         db_url = db_url.replace("postgres://", "postgresql://", 1)
