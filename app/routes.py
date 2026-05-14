@@ -14,8 +14,10 @@ news_service = NewsService()
 
 # --- Main Routes ---
 @main_bp.route('/')
-@login_required
 def index():
+    if not current_user.is_authenticated:
+        return render_template('login.html')
+        
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search')
     query = Article.query.filter(Article.image_url != None, Article.image_url != '', Article.image_url != 'None', Article.image_url != 'undefined')
@@ -45,8 +47,7 @@ def article_detail(article_id):
 # --- Auth Routes ---
 @auth_bp.route('/login')
 def login():
-    if current_user.is_authenticated: return redirect(url_for('main.index'))
-    return render_template('login.html')
+    return redirect(url_for('main.index'))
 
 @auth_bp.route('/terms')
 def terms():

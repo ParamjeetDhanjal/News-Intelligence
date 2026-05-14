@@ -48,7 +48,7 @@ def create_app():
     
     from flask_migrate import Migrate
     login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'main.index'
     login_manager.login_message = None
     login_manager.init_app(app)
     migrate = Migrate(app, db)
