@@ -29,6 +29,9 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     
+    from flask_cors import CORS
+    CORS(app, supports_credentials=True)
+    
     from authlib.integrations.flask_client import OAuth
     oauth = OAuth(app)
     google = oauth.register(
@@ -71,5 +74,11 @@ def create_app():
     # Handle reverse proxy path headers
     from werkzeug.middleware.proxy_fix import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app, x_prefix=1, x_proto=1, x_host=1)
+
+    @app.after_request
+    def add_header(response):
+        # Help with Google OAuth and CORS issues
+        response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
+        return response
 
     return app
