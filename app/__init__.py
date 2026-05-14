@@ -11,10 +11,6 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 def create_app():
     app = Flask(__name__)
     
-    # Handle sub-paths correctly behind reverse proxy
-    from werkzeug.middleware.proxy_fix import ProxyFix
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_prefix=1, x_proto=1, x_host=1)
-    
     # Configuration
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-123')
     
