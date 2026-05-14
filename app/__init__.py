@@ -68,4 +68,8 @@ def create_app():
     with app.app_context():
         db.create_all()
 
+    # Handle reverse proxy path headers
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_prefix=1, x_proto=1, x_host=1)
+
     return app
