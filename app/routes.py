@@ -64,7 +64,7 @@ def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
-@auth_bp.route('/callback')
+@auth_bp.route('/auth')
 def callback():
     google = current_app.extensions['google_oauth']
     token = google.authorize_access_token()
