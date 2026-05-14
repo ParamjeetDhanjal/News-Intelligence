@@ -56,7 +56,7 @@ def terms():
 @auth_bp.route('/login/google')
 def login_google():
     google = current_app.extensions['google_oauth']
-    return google.authorize_redirect(url_for('auth.callback', _external=True))
+    return google.authorize_redirect(url_for('auth.callback', _external=True), prompt='select_account')
 
 @auth_bp.route('/logout')
 @login_required
