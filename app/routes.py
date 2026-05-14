@@ -14,10 +14,8 @@ news_service = NewsService()
 
 # --- Main Routes ---
 @main_bp.route('/')
+@login_required
 def index():
-    if not current_user.is_authenticated:
-        return render_template('login.html')
-        
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search')
     query = Article.query.filter(Article.image_url != None, Article.image_url != '', Article.image_url != 'None', Article.image_url != 'undefined')
@@ -47,7 +45,8 @@ def article_detail(article_id):
 # --- Auth Routes ---
 @auth_bp.route('/login')
 def login():
-    return redirect(url_for('main.index'))
+    if current_user.is_authenticated: return redirect(url_for('main.index'))
+    return render_template('login.html')
 
 @auth_bp.route('/terms')
 def terms():
@@ -62,9 +61,9 @@ def login_google():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('auth.login'))
 
-@auth_bp.route('/auth')
+@auth_bp.route('/callback')
 def callback():
     google = current_app.extensions['google_oauth']
     token = google.authorize_access_token()
@@ -78,9 +77,7 @@ def callback():
         user = User(username=name or email.split('@')[0], email=email, oauth_provider='google', oauth_id=google_id, profile_pic=picture)
         db.session.add(user)
     else:
-        user.profile_pic = picture 
-        if not user.username:
-            user.username = name or email.split('@')[0]
+        user.profile_pic = picture # Update picture if changed
     
     db.session.commit()
     login_user(user)

@@ -29,9 +29,6 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     
-    from flask_cors import CORS
-    CORS(app, supports_credentials=True)
-    
     from authlib.integrations.flask_client import OAuth
     oauth = OAuth(app)
     google = oauth.register(
@@ -51,7 +48,7 @@ def create_app():
     
     from flask_migrate import Migrate
     login_manager = LoginManager()
-    login_manager.login_view = 'main.index'
+    login_manager.login_view = 'auth.login'
     login_manager.login_message = None
     login_manager.init_app(app)
     migrate = Migrate(app, db)
@@ -70,9 +67,5 @@ def create_app():
     # Create database tables
     with app.app_context():
         db.create_all()
-
-    # Handle reverse proxy path headers
-    from werkzeug.middleware.proxy_fix import ProxyFix
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
     return app
