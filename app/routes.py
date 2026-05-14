@@ -62,7 +62,7 @@ def login_google():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('main.index'))
 
 @auth_bp.route('/auth')
 def callback():
@@ -78,7 +78,9 @@ def callback():
         user = User(username=name or email.split('@')[0], email=email, oauth_provider='google', oauth_id=google_id, profile_pic=picture)
         db.session.add(user)
     else:
-        user.profile_pic = picture # Update picture if changed
+        user.profile_pic = picture 
+        if not user.username:
+            user.username = name or email.split('@')[0]
     
     db.session.commit()
     login_user(user)
