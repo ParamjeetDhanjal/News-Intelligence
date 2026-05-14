@@ -75,10 +75,4 @@ def create_app():
     from werkzeug.middleware.proxy_fix import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
-    @app.after_request
-    def add_header(response):
-        # Help with Google OAuth and CORS issues
-        response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
-        return response
-
     return app
